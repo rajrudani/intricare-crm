@@ -1,0 +1,113 @@
+@extends('layouts.app')
+
+@section('title')
+    Contacts
+@endsection
+
+@section('content')
+    <div class="table-title">
+        <div class="row">
+            <div class="col-sm-4">
+                <h2>All <b>Contacts</b></h2>
+            </div>
+            <div class="col-sm-8">
+                <a href="{{ route('contacts.create') }}" class="btn btn-primary">Add New Contact</a>
+            </div>
+        </div>
+    </div>
+    <div class="table-filter">
+        <div class="row">
+            <div class="col-sm-12">
+                <button type="button" class="btn btn-danger text-white d-none" id="clearFilterBtn">Clear</i></button>
+                <button type="button" class="btn btn-primary" id="searchBtn"><i class="fa fa-search"></i></button>
+                
+                <div class="filter-group">
+                    <label>Gender</label>
+                    <select class="form-control" id="gender-filter">
+                        <option value="">All</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Email</label>
+                    <input type="text" class="form-control" id="email-filter">
+                </div>
+                <div class="filter-group">
+                    <label>Name</label>
+                    <input type="text" class="form-control" id="name-filter">
+                </div>
+                <span class="filter-icon" ><i class="fa fa-filter"></i></span>
+            </div>
+        </div>
+    </div>
+    <table class="table table-striped table-hover" id="contactsTable">
+        <thead>
+            <tr>
+                <th>#ID</th>
+                <th>Profile</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Gender</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+@endsection
+
+@section('script')
+    <script>
+        $(document).ready(function () {
+            var datatable = $('#contactsTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: '{{ route('contacts.index') }}',
+                    data: function (d) {
+                        d.filters = {
+                            gender: $('#gender-filter').val(),
+                            email: $('#email-filter').val(),
+                            name: $('#name-filter').val()
+                        };
+                    }
+                },
+                columns: [
+                    {data: 'id', name: 'id'},
+                    {data: 'profile_image', name: 'profile_image', render: function(imagePath) {
+                        return '<img src="' + imagePath + '" class="avatar" alt="Profile Image" height="35px" width="35px">';
+                    }, orderable: false, searchable: false },
+                    {data: 'name', name: 'name'},
+                    {data: 'email', name: 'email'},
+                    {data: 'phone', name: 'phone'},
+                    {data: 'gender', name: 'gender'},
+                    {data: 'action', name: 'action', orderable: false, searchable: false}
+                ],
+                searching: false,
+                lengthChange: false,
+                order: [[0, 'desc']],
+                pageLength: 25
+            });
+
+            // Search button click event
+            $('#searchBtn').click(function () {
+                datatable.ajax.reload();
+                $('#clearFilterBtn').removeClass('d-none');
+            });
+
+            // Clear filters functionality
+            $('#clearFilterBtn').click(function () {
+                $('#gender-filter').val('');
+                $('#email-filter').val('');
+                $('#name-filter').val('');
+
+                datatable.ajax.reload();
+
+                $(this).addClass('d-none');
+            });
+        });
+    </script>
+@endsection
