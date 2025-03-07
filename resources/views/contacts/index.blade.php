@@ -18,8 +18,8 @@
     <div class="table-filter">
         <div class="row">
             <div class="col-sm-12">
-                <button type="button" class="btn btn-danger text-white d-none" id="clearFilterBtn">Clear</i></button>
-                <button type="button" class="btn btn-primary" id="searchBtn"><i class="fa fa-search"></i></button>
+                <button type="button" class="btn btn-warning d-none" id="clearFilterBtn">Clear</i></button>
+                <button type="button" class="btn btn-dark" id="searchBtn"><i class="fa fa-search"></i></button>
                 
                 <div class="filter-group">
                     <label>Gender</label>
@@ -107,6 +107,28 @@
                 datatable.ajax.reload();
 
                 $(this).addClass('d-none');
+            });
+
+            $(document).on('click', '.delete-contact', function () {
+                let contactId = $(this).data('id');
+            
+                if (!confirm('Are you sure you want to delete this contact?')) return;
+            
+                $.ajax({
+                    url: '{{ route('contacts.destroy', '') }}/' + contactId,
+                    type: 'DELETE',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function (response) {
+                        datatable.ajax.reload();
+
+                        alert(response.message);
+                    },
+                    error: function (xhr) {
+                        alert('Error: ' + xhr.responseJSON.error);
+                    }
+                });
             });
         });
     </script>

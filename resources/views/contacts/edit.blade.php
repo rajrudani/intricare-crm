@@ -66,19 +66,19 @@
                             <div class="m-2">
                                 <img src="{{ $contact->profile_imagepath }}" alt="Profile Image" class="" height="75px" width="110px">
                             </div>
-                            <input type="file" class="form-control" id="profile_image" name="profile_image" accept="image/*">
+                            <input type="file" class="form-control file-control" id="profile_image" name="profile_image" accept="image/*">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="additional_file">Additional File</label>
-                            <input type="file" class="form-control" id="additional_file" name="additional_file">
+                            <input type="file" class="form-control file-control" id="additional_file" name="additional_file">
                         </div>
                     </div>
                 </div>
                 <hr>
                 <div class="row">
-                    <button type="button" class="btn btn-primary" id="btn-add-custom-row">+ Add Custom Field</button>
+                    <button type="button" class="btn btn-dark" id="btn-add-custom-row">+ Add Custom Field</button>
                     <div class="col-md-12 mt-3">
                         <div id="custom-field-container">
                             @php

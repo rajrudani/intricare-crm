@@ -69,4 +69,9 @@ class ContactRepository implements ContactRepositoryInterface
             'additional_file' => isset($validatedData['additional_file']) ? $validatedData['additional_file']->store('additional_files', 'public') : $contact->additional_file,
         ]);
     }
+
+    public function destroyContact($contact)
+    {   
+        return $contact->delete();
+    }
 }
