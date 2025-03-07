@@ -77,6 +77,12 @@ class ContactController extends Controller
         return response()->json(['message' => 'Contact Updated successfully!'], 200);
     }
 
+    /**
+     * Handle delete existing contact.
+     *
+     * @param Contact $contact
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function destroy(Contact $contact)
     {
         $this->contactRepository->destroyContact($contact);

@@ -70,6 +70,12 @@ class ContactRepository implements ContactRepositoryInterface
         ]);
     }
 
+    /**
+     * Delete an existing contact from the database.
+     *
+     * @param Contact $contact The contact instance to be deleted.
+     * @return bool True if deleted successfully, false otherwise.
+     */
     public function destroyContact($contact)
     {   
         return $contact->delete();
