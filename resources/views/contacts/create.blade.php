@@ -83,7 +83,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <button type="submit" class="btn btn-primary mt-3">Save Contact</button>
+                        <button type="submit" id="btnSubmit" class="btn btn-primary mt-3">Save Contact</button>
                     </div>
                 </div>
             </form>
@@ -96,7 +96,8 @@
         $(document).ready(function() {
             $("#contactForm").on("submit", function(e) {
                 e.preventDefault();
-                
+
+                $('#btnSubmit').attr('disabled', true);
                 $.ajax({
                     url: "{{ route('contacts.store') }}",
                     type: "POST",
@@ -104,10 +105,13 @@
                     contentType: false,
                     processData: false,
                     success: function(response) {
-                        alert(response.message);
-                        window.location.href = "{{ route('contacts.index') }}";
+                        showToast(response.message, 'success');
+                        setInterval(() => {
+                            window.location.href = "{{ route('contacts.index') }}";
+                        }, 2000);
                     },
                     error: function (xhr) {
+                        $('#btnSubmit').attr('disabled', false);
                         $('.error-msg').remove();
                         $('input, textarea, select').removeClass('is-invalid');
 

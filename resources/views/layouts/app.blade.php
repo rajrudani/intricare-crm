@@ -10,9 +10,11 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/style.css') }}">
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
@@ -33,6 +35,33 @@
     </div>
 
     @yield('script')
+
+    <script>
+        function showToast(message, type){
+            if(type == 'error'){
+                bgColor = '#dc3545';
+                hideAfter = 5000;
+            }else{
+                bgColor = 'black';
+                hideAfter = 2000;
+            }
+            $.toast({
+                text: message, 
+                heading: type.charAt(0).toUpperCase() + type.slice(1), 
+                icon: type, 
+                showHideTransition: 'fade', 
+                allowToastClose: true, 
+                hideAfter: hideAfter, 
+                stack: 5, 
+                position: 'bottom-left', 
+                textAlign: 'left',  
+                loader: true,  
+                loaderBg: '#d1e50c',  
+                bgColor: bgColor, 
+                textColor: 'white', 
+            });
+        }
+    </script>
 </body>
 
 </html>

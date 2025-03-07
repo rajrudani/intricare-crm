@@ -123,7 +123,7 @@
                     success: function (response) {
                         datatable.ajax.reload();
 
-                        alert(response.message);
+                        showToast(response.message, 'success');
                     },
                     error: function (xhr) {
                         alert('Error: ' + xhr.responseJSON.error);
