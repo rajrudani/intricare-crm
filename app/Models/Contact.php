@@ -16,6 +16,6 @@ class Contact extends Model
     //profile imagepath
     public function getProfileImagepathAttribute()
     {
-        return 'storage/' . $this->profile_image;
+        return '/storage/' . $this->profile_image;
     }
 }

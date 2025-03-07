@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ContactRequest extends FormRequest
@@ -21,12 +22,20 @@ class ContactRequest extends FormRequest
      */
     public function rules(): array
     {
+        // Check if the request is for updating or creating
+        $isUpdate = $this->isMethod('PUT') || $this->isMethod('PATCH');
+        $contactId = $this->route('contact')->id ?? null;
+        
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'unique:contacts,email'],
+            'email' => $isUpdate 
+                ? ['required', 'email', 'unique:contacts,email,'.$contactId]
+                : ['required', 'email', 'unique:contacts,email'],
             'phone' => ['required', 'string', 'max:20'],
             'gender' => ['required', 'in:Male,Female,Other'],
-            'profile_image' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'profile_image' => $isUpdate 
+                ? [ 'nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048']
+                : [  'required', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
             'additional_file' => ['nullable', 'file', 'mimes:pdf,docx,txt', 'max:5120'],
             'custom_fields' => ['nullable', 'array'],
             'custom_fields.*.title' => ['required', 'string', 'max:255'],

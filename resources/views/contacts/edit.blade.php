@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
 @section('title')
-    Create Contact
+    Edit Contact
 @endsection
 
 @section('content')
     <div class="table-title">
         <div class="row">
             <div class="col-sm-4">
-                <h2>Create <b>Contact</b></h2>
+                <h2>Edit <b>Contact</b></h2>
             </div>
             <div class="col-sm-8">
                 <a href="{{ route('contacts.index') }}" class="btn btn-warning"><span>All Contacts</span></a>
@@ -20,23 +20,24 @@
         <div class="col-md-12">
             <form id="contactForm" enctype="multipart/form-data">
                 @csrf
+                @method('PUT')
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="name">Name *</label>
-                            <input type="text" class="form-control" id="name" name="name">
+                            <input type="text" class="form-control" id="name" name="name" value="{{ $contact->name }}">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="email">Email *</label>
-                            <input type="email" class="form-control" id="email" name="email">
+                            <input type="email" class="form-control" id="email" name="email" value="{{ $contact->email }}">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="phone">Phone No. *</label>
-                            <input type="text" class="form-control" id="phone" name="phone">
+                            <input type="text" class="form-control" id="phone" name="phone" value="{{ $contact->phone }}">
                         </div>
                     </div>
                     <div class="col-md-6 mt-2">
@@ -44,17 +45,17 @@
                         <div class="form-group">
                             <div class="form-check-inline">
                                 <label class="form-check-label">
-                                    <input type="radio" class="form-check-input" name="gender" value="Male">Male
+                                    <input type="radio" class="form-check-input" name="gender" value="Male" @if ($contact->gender == 'Male') @checked(true) @endif>Male
                                 </label>
                             </div>
                             <div class="form-check-inline">
                                 <label class="form-check-label">
-                                    <input type="radio" class="form-check-input" name="gender" value="Female">Female
+                                    <input type="radio" class="form-check-input" name="gender" value="Female" @if ($contact->gender == 'Female') @checked(true) @endif>Female
                                 </label>
                             </div>
                             <div class="form-check-inline">
                                 <label class="form-check-label">
-                                    <input type="radio" class="form-check-input" name="gender" value="Other">Other
+                                    <input type="radio" class="form-check-input" name="gender" value="Other" @if ($contact->gender == 'Other') @checked(true) @endif>Other
                                 </label>
                             </div>
                         </div>
@@ -62,6 +63,9 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="profile_image">Profile Image *</label>
+                            <div class="m-2">
+                                <img src="{{ $contact->profile_imagepath }}" alt="Profile Image" class="" height="75px" width="110px">
+                            </div>
                             <input type="file" class="form-control" id="profile_image" name="profile_image" accept="image/*">
                         </div>
                     </div>
@@ -77,13 +81,36 @@
                     <button type="button" class="btn btn-primary" id="btn-add-custom-row">+ Add Custom Field</button>
                     <div class="col-md-12 mt-3">
                         <div id="custom-field-container">
-                             
+                            @php
+                                $fieldCounter = 0;
+                            @endphp
+                            @isset($contact->custom_fields)
+                                @forelse (json_decode($contact->custom_fields) as $customField)
+                                    <div class="row custom-field-row mb-2">
+                                        <div class="col-md-4">
+                                            <input type="text" class="form-control" name="custom_fields[{{ $fieldCounter }}][title]" value="{{ $customField->title }}" placeholder="Title">
+                                        </div>
+                                        <div class="col-md-7">
+                                            <input type="text" class="form-control" name="custom_fields[{{ $fieldCounter }}][value]" value="{{ $customField->value }}" placeholder="Value">
+                                        </div>
+                                        <div class="col-md-1">
+                                            <button type="button" class="btn btn-danger text-white btn-delete-custom-row">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    @php
+                                        $fieldCounter++;
+                                    @endphp
+                                @empty
+                                @endforelse
+                            @endisset
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <button type="submit" class="btn btn-primary mt-3">Save Contact</button>
+                        <button type="submit" class="btn btn-primary mt-3">Update</button>
                     </div>
                 </div>
             </form>
@@ -98,7 +125,7 @@
                 e.preventDefault();
                 
                 $.ajax({
-                    url: "{{ route('contacts.store') }}",
+                    url: "{{ route('contacts.update', $contact->id) }}",
                     type: "POST",
                     data: new FormData(this),
                     contentType: false,
@@ -139,7 +166,7 @@
 
     <script>
         $(document).ready(function() {
-            let fieldCounter = 0;
+            let fieldCounter = {{ $fieldCounter++ }};
         
             // Add new custom field row
             $('#btn-add-custom-row').click(function() {

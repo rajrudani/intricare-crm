@@ -34,19 +34,39 @@ class ContactRepository implements ContactRepositoryInterface
     /**
      * Store a new contact in the database.
      *
-     * @param array $contactData
+     * @param array $validatedData
      * @return Contact
      */
-    public function storeContact($contactData)
+    public function storeContact($validatedData)
     {
         return Contact::create([
-            'name'            => $contactData['name'],
-            'email'           => $contactData['email'],
-            'phone'           => $contactData['phone'],
-            'gender'          => $contactData['gender'],
-            'custom_fields'   => isset($contactData['custom_fields']) ? json_encode($contactData['custom_fields']) : null,
-            'profile_image'   => isset($contactData['profile_image']) ? $contactData['profile_image']->store('profile_images', 'public') : null,
-            'additional_file' => isset($contactData['additional_file']) ? $contactData['additional_file']->store('additional_files', 'public') : null,
+            'name'            => $validatedData['name'],
+            'email'           => $validatedData['email'],
+            'phone'           => $validatedData['phone'],
+            'gender'          => $validatedData['gender'],
+            'custom_fields'   => isset($validatedData['custom_fields']) ? json_encode($validatedData['custom_fields']) : null,
+            'profile_image'   => isset($validatedData['profile_image']) ? $validatedData['profile_image']->store('profile_images', 'public') : null,
+            'additional_file' => isset($validatedData['additional_file']) ? $validatedData['additional_file']->store('additional_files', 'public') : null,
+        ]);
+    }
+
+    /**
+     * Update exisiting contact in the database.
+     *
+     * @param array $validatedData
+     * @param array $contact
+     * @return Contact
+     */
+    public function updateContact($validatedData, $contact)
+    {
+        return $contact->update([
+            'name'            => $validatedData['name'],
+            'email'           => $validatedData['email'],
+            'phone'           => $validatedData['phone'],
+            'gender'          => $validatedData['gender'],
+            'custom_fields'   => isset($validatedData['custom_fields']) ? json_encode($validatedData['custom_fields']) : null,
+            'profile_image'   => isset($validatedData['profile_image']) ? $validatedData['profile_image']->store('profile_images', 'public') : $contact->profile_image,
+            'additional_file' => isset($validatedData['additional_file']) ? $validatedData['additional_file']->store('additional_files', 'public') : $contact->additional_file,
         ]);
     }
 }

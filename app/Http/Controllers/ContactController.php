@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Contact;
 use Illuminate\Http\Request;
 use App\Http\Requests\ContactRequest;
 use App\Repositories\ContactRepositoryInterface;
@@ -50,5 +51,29 @@ class ContactController extends Controller
         $this->contactRepository->storeContact($request->validated());
 
         return response()->json(['message' => 'Contact saved successfully!'], 200);
+    }
+
+    /**
+     * Show the form for editing a contact.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function edit(Contact $contact)
+    {
+        return view('contacts.edit', compact('contact'));
+    }
+
+    /**
+     * Handle update existing contact.
+     *
+     * @param ContactRequest $request
+     * @param Contact $contact
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(ContactRequest $request, Contact $contact)
+    {
+        $this->contactRepository->updateContact($request->validated(), $contact);
+
+        return response()->json(['message' => 'Contact Updated successfully!'], 200);
     }
 }
