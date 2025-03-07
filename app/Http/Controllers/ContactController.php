@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Contact;
 use Illuminate\Http\Request;
 use App\Http\Requests\ContactRequest;
+use App\Http\Requests\MergeContactRequest;
 use App\Repositories\ContactRepositoryInterface;
 
 class ContactController extends Controller
@@ -88,5 +89,28 @@ class ContactController extends Controller
         $this->contactRepository->destroyContact($contact);
        
         return response()->json(['message' => 'Contact deleted successfully.'], 200);
+    }
+
+    /**
+     * Get the modal content for merging a contact.
+     *
+     * @param int $contactId The ID of the contact to merge.
+     * @return \Illuminate\View\View The rendered view with the contact and available master contacts.
+     */
+    public function getMergeContactModal($contactId)
+    {   
+        $contact = Contact::find($contactId);
+        $masterContacts = Contact::where('id', '!=', $contactId)
+                                ->orderBy('name')
+                                ->get();
+
+        return view('contacts.merge-contact-modal', compact('contact', 'masterContacts'));
+    }
+
+    public function mergeContacts(MergeContactRequest $request)
+    {   
+        $this->contactRepository->mergeContacts($request->validated());
+
+        return response()->json(['message' => 'Contacts merged successfully.'], 200);
     }
 }

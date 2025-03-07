@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Contact;
+use App\Models\ArchiveContact;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -79,5 +80,107 @@ class ContactRepository implements ContactRepositoryInterface
     public function destroyContact($contact)
     {   
         return $contact->delete();
+    }
+
+    /**
+     * Merge two contacts.
+     */
+    public function mergeContacts($validatedData)
+    {   
+        $masterContact = Contact::findOrFail($validatedData['master_contact_id']);
+        $secondaryContact = Contact::findOrFail($validatedData['contact_id']);
+
+        //archice master contact
+        $this->archiveContact($masterContact);
+
+        $masterContact->update([
+            'email'           => $this->mergeEmails($masterContact->email, $secondaryContact->email),
+            'phone'           => $this->mergePhoneNumbers($masterContact->phone, $secondaryContact->phone),
+            'custom_fields'   => $this->mergeCustomFields($masterContact->custom_fields, $secondaryContact->custom_fields),
+            'additional_file' => $masterContact->additional_file ?? $secondaryContact->additional_file
+        ]);
+
+        return $secondaryContact->update(['merged_with' => $masterContact->id]);
+    }
+
+    /**
+     * archive contact to backup original data.
+     */
+    private function archiveContact($contact)
+    {
+        return ArchiveContact::create([
+            'contact_id'      => $contact->id,
+            'name'            => $contact->name,
+            'gender'          => $contact->gender,
+            'email'           => $contact->email,
+            'phone'           => $contact->phone,
+            'profile_image'   => $contact->profile_image,
+            'additional_file' => $contact->additional_file,
+            'custom_fields'   => $contact->custom_fields
+        ]);
+    }
+
+    /**
+     * Merge custom fields.
+     */
+    private function mergeCustomFields($masterFields, $secondaryFields)
+    {
+        $masterCustomFields = json_decode($masterFields, true) ?? [];
+        $secondaryCustomFields = json_decode($secondaryFields, true) ?? [];
+
+        $mergedCustomFields = [];
+
+        $masterFieldMap = [];
+        foreach ($masterCustomFields as $field) {
+            $masterFieldMap[$field['title']] = $field['value'];
+        }
+
+        foreach ($secondaryCustomFields as $field) {
+            $title = $field['title'];
+            $value = $field['value'];
+
+            if (!isset($masterFieldMap[$title])) {
+                $masterFieldMap[$title] = $value;
+            }
+        }
+
+        foreach ($masterFieldMap as $title => $value) {
+            $mergedCustomFields[] = [
+                'title' => $title,
+                'value' => $value
+            ];
+        }
+
+        return json_encode($mergedCustomFields);
+    }
+
+    /**
+     * Merge emails, store additional emails if they differ.
+     */
+    private function mergeEmails($masterEmail, $secondaryEmail)
+    {
+        $mergedEmails = array_unique(
+                            array_merge(
+                                array_map('trim', explode(',', $masterEmail)), 
+                                array_map('trim', explode(',', $secondaryEmail))
+                            )
+                        );
+
+        return implode(',', $mergedEmails);
+    }
+
+    /**
+     * Merge phone numbers, store additional phone numbers if they differ.
+     */
+    private function mergePhoneNumbers($masterPhone, $secondaryPhone)
+    {
+        $mergePhones = array_unique(
+            array_merge(
+                array_map('trim', explode(',', $masterPhone)), 
+                array_map('trim', explode(',', $secondaryPhone))
+            )
+        );
+
+        return implode(',', $mergePhones);
     }
 }

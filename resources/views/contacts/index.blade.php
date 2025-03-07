@@ -45,7 +45,7 @@
     <table class="table table-striped table-hover" id="contactsTable">
         <thead>
             <tr>
-                <th>#ID</th>
+                {{-- <th>#ID</th> --}}
                 <th>Profile</th>
                 <th>Name</th>
                 <th>Email</th>
@@ -57,6 +57,8 @@
         <tbody>
         </tbody>
     </table>
+
+    <div class="modal fade" id="mergeContactModal" tabindex="-1" aria-labelledby="mergeContactTitle" aria-hidden="false"></div>
 @endsection
 
 @section('script')
@@ -76,19 +78,19 @@
                     }
                 },
                 columns: [
-                    {data: 'id', name: 'id'},
+                    // {data: 'id', name: 'id'},
                     {data: 'profile_image', name: 'profile_image', render: function(imagePath) {
                         return '<img src="' + imagePath + '" class="avatar" alt="Profile Image" height="30px" width="30px">';
                     }, orderable: false, searchable: false },
                     {data: 'name', name: 'name'},
                     {data: 'email', name: 'email'},
                     {data: 'phone', name: 'phone'},
-                    {data: 'gender', name: 'gender'},
-                    {data: 'action', name: 'action', orderable: false, searchable: false}
+                    {data: 'gender', name: 'gender', class: 'text-center'},
+                    {data: 'action', name: 'action', orderable: false, searchable: false, class: 'text-center'}
                 ],
                 searching: false,
                 lengthChange: false,
-                order: [[0, 'desc']],
+                order: [[1, 'asc']],
                 pageLength: 25
             });
 
@@ -127,6 +129,25 @@
                     },
                     error: function (xhr) {
                         alert('Error: ' + xhr.responseJSON.error);
+                    }
+                });
+            });
+
+            $(document).on('click', '.merge-contact', function() {
+                let modalElement = $('#mergeContactModal');
+                let contactId = $(this).data('id');
+
+                $.ajax({
+                    url: '{{ route("contacts.merge-contact-modal", "") }}/' + contactId,
+                    type: 'GET',
+                    success: function(response) {
+                        modalElement.html(response); 
+
+                        let modalInstance = new bootstrap.Modal(modalElement[0]); 
+                        modalInstance.show(); 
+                    },
+                    error: function(error) {
+                        console.error('Error loading modal content:', error);
                     }
                 });
             });
