@@ -13,9 +13,15 @@ class Contact extends Model
         'name', 'email', 'phone', 'gender', 'profile_image', 'additional_file', 'custom_fields', 'merged_with'
     ];
 
-    //profile imagepath
+    //Profile Imagepath
     public function getProfileImagepathAttribute()
     {
-        return '/storage/' . $this->profile_image;
+        return asset('storage/'.$this->profile_image);
+    }
+
+    //Additional Filepath
+    public function getAdditionalFilepathAttribute()
+    {
+        return asset('storage/'.$this->additional_file);
     }
 }
