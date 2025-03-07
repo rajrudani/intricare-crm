@@ -23,7 +23,7 @@ class ContactController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            return $this->contactRepository->getDatatable(request()->filters);
+            return $this->contactRepository->getDatatable(request('filters', []));
         }
 
         return view('contacts.index');

@@ -78,7 +78,7 @@
                 columns: [
                     {data: 'id', name: 'id'},
                     {data: 'profile_image', name: 'profile_image', render: function(imagePath) {
-                        return '<img src="' + imagePath + '" class="avatar" alt="Profile Image" height="35px" width="35px">';
+                        return '<img src="' + imagePath + '" class="avatar" alt="Profile Image" height="30px" width="30px">';
                     }, orderable: false, searchable: false },
                     {data: 'name', name: 'name'},
                     {data: 'email', name: 'email'},
