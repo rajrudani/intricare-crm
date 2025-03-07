@@ -44,9 +44,9 @@ class ContactRepository implements ContactRepositoryInterface
             'email'           => $contactData['email'],
             'phone'           => $contactData['phone'],
             'gender'          => $contactData['gender'],
-            'custom_fields'   => $contactData['custom_fields'] ?? null,
-            'profile_image'   => $contactData['profile_image'] ? $contactData['profile_image']->store('profile_images', 'public') : null,
-            'additional_file' => $contactData['additional_file'] ? $contactData['additional_file']->store('additional_files', 'public') : null,
+            'custom_fields'   => isset($contactData['custom_fields']) ? json_encode($contactData['custom_fields']) : null,
+            'profile_image'   => isset($contactData['profile_image']) ? $contactData['profile_image']->store('profile_images', 'public') : null,
+            'additional_file' => isset($contactData['additional_file']) ? $contactData['additional_file']->store('additional_files', 'public') : null,
         ]);
     }
 }

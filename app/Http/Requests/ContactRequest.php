@@ -29,6 +29,8 @@ class ContactRequest extends FormRequest
             'profile_image' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
             'additional_file' => ['nullable', 'file', 'mimes:pdf,docx,txt', 'max:5120'],
             'custom_fields' => ['nullable', 'array'],
+            'custom_fields.*.title' => ['required', 'string', 'max:255'],
+            'custom_fields.*.value' => ['required', 'string', 'max:255'],
         ];
     }
 
@@ -51,6 +53,13 @@ class ContactRequest extends FormRequest
             'profile_image.mimes' => 'Only JPG, JPEG, and PNG formats are allowed.',
             'profile_image.max' => 'Profile image must not be larger than 2MB.',
             'additional_file.max' => 'Additional file must not exceed 5MB.',
+
+            'custom_fields.*.title.required' => 'Each custom field must have a title.',
+            'custom_fields.*.title.string' => 'Custom field title must be a valid string.',
+            'custom_fields.*.title.max' => 'Custom field title must not exceed 255 characters.',
+            'custom_fields.*.value.required' => 'Each custom field must have a value.',
+            'custom_fields.*.value.numeric' => 'Custom field value must be a number.',
+            'custom_fields.*.value.min' => 'Custom field value must be at least 0.',
         ];
     }
 }

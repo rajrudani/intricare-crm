@@ -71,6 +71,31 @@
                             <input type="file" class="form-control" id="additional_file" name="additional_file">
                         </div>
                     </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <button type="button" class="btn btn-primary" id="btn-add-custom-row">+ Add Custom Fields</button>
+                    <div class="col-md-12 mt-3">
+                        <div id="custom-field-container">
+                            {{-- <div class="d-none">
+                                <div class="row custom-field-row mb-2">
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" name="custom_fields[0][title]" placeholder="Title">
+                                    </div>
+                                    <div class="col-md-7">
+                                        <input type="text" class="form-control" name="custom_fields[0][value]" placeholder="Value">
+                                    </div>
+                                    <div class="col-md-1">
+                                        <button type="button" class="btn btn-danger text-white btn-delete-custom-row">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div> --}}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
                     <div class="col-md-12">
                         <button type="submit" class="btn btn-primary mt-3">Save Contact</button>
                     </div>
@@ -103,13 +128,18 @@
                         if (xhr.status === 422) {
                             var errors = xhr.responseJSON.errors;
                             $.each(errors, function(field, messages) {
-                                var fieldElement = $('[name="' + field + '"]');
                                 var errorMessage = $('<div class="error-msg text-danger"></div>').text(messages[0]);
 
-                                if (fieldElement.attr('type') === 'radio') {
-                                    fieldElement.closest('.form-group').append(errorMessage);
-                                } else {
-                                    fieldElement.addClass('is-invalid').after(errorMessage);
+                                if (field.startsWith('custom_fields')) {
+                                    var customFieldElement = $(`[name="custom_fields[`+ field.split('.')[1] +`][`+ field.split('.')[2] +`]"`);
+                                    customFieldElement.addClass('is-invalid').after(errorMessage);
+                                }else{
+                                    var fieldElement = $('[name="' + field + '"]');
+                                    if (fieldElement.attr('type') === 'radio') {
+                                        fieldElement.closest('.form-group').append(errorMessage);
+                                    } else {
+                                        fieldElement.addClass('is-invalid').after(errorMessage);
+                                    }
                                 }
                             });
                         } else {
@@ -120,4 +150,41 @@
             });
         });
     </script>
+
+    <script>
+        $(document).ready(function() {
+            let fieldCounter = 0;
+        
+            // Add new custom field row
+            $('#btn-add-custom-row').click(function() {
+                $('#custom-field-container').append(createCustomFieldRow());
+                fieldCounter++;
+            });
+        
+            // Delete custom field row
+            $(document).on('click', '.btn-delete-custom-row', function() {
+                $(this).closest('.custom-field-row').remove();
+            });
+
+            function createCustomFieldRow() {
+                const newRow = `
+                    <div class="row custom-field-row mb-2">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" name="custom_fields[${fieldCounter}][title]" placeholder="Title">
+                        </div>
+                        <div class="col-md-7">
+                            <input type="text" class="form-control" name="custom_fields[${fieldCounter}][value]" placeholder="Value">
+                        </div>
+                        <div class="col-md-1">
+                            <button type="button" class="btn btn-danger text-white btn-delete-custom-row">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                return newRow;
+            }
+        });
+    </script>
+
 @endsection
