@@ -12,14 +12,15 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="contact_id">Contact</label>
                             <input type="text" class="form-control" value="{{ $contact->name }}" disabled>
                             <input type="hidden" name="contact_id" class="form-control" value="{{ $contact->id }}">
                         </div>
                     </div>
+                    <div class="col-md-12 text-center mt-2 mb-2">
+                        <h6>Merge To</h6>
+                    </div>
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="master_contact_id" class="form-label">Master Contact *</label>
                             <select class="form-control" name="master_contact_id" id="master_contact_id">
                                 <option value="">Select Master Contact</option>
                                 @forelse ($masterContacts as $mContact)
