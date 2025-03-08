@@ -56,7 +56,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="phone">Phone No. *</label>
-                            <input type="text" class="form-control" id="phone" name="phone">
+                            <input type="text" class="form-control validate-phone" id="phone" name="phone" placeholder="+9187580XXXXX">
                         </div>
                     </div>
                     <div class="col-md-6">

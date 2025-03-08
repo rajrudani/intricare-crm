@@ -62,7 +62,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="phone">Phone No. *</label>
-                            <input type="text" class="form-control" id="phone" name="phone"
+                            <input type="text" class="form-control validate-phone" id="phone" name="phone"
                                 value="{{ $contact->phone }}">
                         </div>
                     </div>
@@ -74,7 +74,7 @@
                     @empty(!$mergedData['emails'])
                         <div class="col-md-6">
                             <b><span class="mr-1"><i class="fa fa-envelope"></i></span> Secondary Emails</b>
-                            <div class="mt-1">
+                            <div class="mt-2">
                                 @foreach ($mergedData['emails'] as $index => $email)
                                     <div class="input-group mb-2">
                                         <input type="email" class="form-control" name="merged_emails[]"
@@ -88,10 +88,10 @@
                     @empty(!$mergedData['phones'])
                         <div class="col-md-6">
                             <b><span class="mr-1"><i class="fa fa-phone"></i></span> Secondary Phones</b>
-                            <div class="mt-1">
+                            <div class="mt-2">
                                 @foreach ($mergedData['phones'] as $index => $phone)
                                     <div class="input-group mb-2">
-                                        <input type="text" class="form-control" name="merged_phones[]"
+                                        <input type="text" class="form-control validate-phone" name="merged_phones[]"
                                             value="{{ $phone }}" required>
                                         <button type="button" class="btn btn-danger remove-field">✖</button>
                                     </div>

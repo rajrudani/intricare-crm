@@ -39,6 +39,17 @@
     @yield('script')
 
     <script>
+        $('.validate-phone').on('input', function() {
+            var phoneInput = $(this).val();
+            
+            phoneInput = phoneInput.replace(/[^+\d]/g, '');
+            if (!phoneInput.startsWith('+')) {
+                phoneInput = '+' + phoneInput.replace(/^/, '');
+            }
+
+            $(this).val(phoneInput);
+        });
+
         function showToast(message, type){
             if(type == 'error'){
                 bgColor = '#dc3545';

@@ -34,15 +34,15 @@ $(document).ready(function() {
                             customFieldElement.addClass('is-invalid').after(
                                 errorMessage);
 
-                        // } else if (field.startsWith('merged_emails')) {
-                        //     $('[name="merged_emails[]"]').each(function(index) {
-                        //         $(this).addClass('is-invalid');
-                        //     });
+                        } else if (field.startsWith('merged_emails')) {
+                            $('[name="merged_emails[]"]').each(function(index) {
+                                $(this).addClass('is-invalid');
+                            });
                         
-                        // } else if (field.startsWith('merged_phones')) {
-                        //     $('[name="merged_phones[]"]').each(function(index) {
-                        //         $(this).addClass('is-invalid');
-                        //     });
+                        } else if (field.startsWith('merged_phones')) {
+                            $('[name="merged_phones[]"]').each(function(index) {
+                                $(this).addClass('is-invalid');
+                            });
 
                         } else {
                             var fieldElement = $('[name="' + field + '"]');

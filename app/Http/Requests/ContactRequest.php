@@ -40,7 +40,7 @@ class ContactRequest extends FormRequest
             'custom_fields.*.value' => ['required', 'string', 'max:255'],
 
             'merged_emails' => ['nullable', 'array'],
-            // 'merged_emails.*' => ['email', 'distinct', 'max:255'],
+            // 'merged_emails.*' => ['email', 'max:255'],
 
             'merged_phones' => ['nullable', 'array'],
             // 'merged_phones.*' => ['string', 'distinct', 'max:20'],
