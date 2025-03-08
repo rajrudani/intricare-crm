@@ -54,6 +54,9 @@
                 showToast(response.message, 'success');
                 
                 $('#btn-modal-close').trigger('click');
+                setInterval(() => {
+                    window.location.href = '{{ route('contacts.index') }}';
+                }, 2000);
             },
             error: function(xhr) {
                 $('.error-msg').remove();
