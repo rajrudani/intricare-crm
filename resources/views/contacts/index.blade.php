@@ -15,45 +15,14 @@
             </div>
         </div>
     </div>
+
     <div class="table-filter">
-        <div class="row">
-            <div class="col-sm-12">
-                <button type="button" class="btn btn-warning d-none" id="clearFilterBtn">Clear</i></button>
-                <button type="button" class="btn btn-dark" id="searchBtn"><i class="fa fa-search"></i></button>
-                
-                <div class="filter-group">
-                    <label>Gender</label>
-                    <select class="form-control" id="gender-filter">
-                        <option value="">All</option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Email</label>
-                    <input type="text" class="form-control" id="email-filter">
-                </div>
-                <div class="filter-group">
-                    <label>Name</label>
-                    <input type="text" class="form-control" id="name-filter">
-                </div>
-                <div class="filter-group">
-                    <label>Visibility</label>
-                    <select class="form-control" id="visibility-filter">
-                        <option value="">All</option>
-                        <option value="merged">Merged</option>
-                        <option value="not_merged">Not Merged</option>
-                    </select>
-                </div>
-                <span class="filter-icon" ><i class="fa fa-filter"></i></span>
-            </div>
-        </div>
+        @include('contacts.partials.filters')
     </div>
+
     <table class="table table-striped table-hover" id="contactsTable">
         <thead>
             <tr>
-                {{-- <th>#ID</th> --}}
                 <th>Profile</th>
                 <th>Name</th>
                 <th>Email</th>
@@ -63,6 +32,7 @@
             </tr>
         </thead>
         <tbody>
+            
         </tbody>
     </table>
 
@@ -71,96 +41,10 @@
 
 @section('script')
     <script>
-        $(document).ready(function () {
-            var datatable = $('#contactsTable').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: {
-                    url: '{{ route('contacts.index') }}',
-                    data: function (d) {
-                        d.filters = {
-                            gender: $('#gender-filter').val(),
-                            email: $('#email-filter').val(),
-                            name: $('#name-filter').val(),
-                            visibility: $('#visibility-filter').val()
-                        };
-                    }
-                },
-                columns: [
-                    // {data: 'id', name: 'id'},
-                    {data: 'profile_image', name: 'profile_image', render: function(imagePath) {
-                        return '<img src="' + imagePath + '" class="avatar" alt="Profile Image" height="30px" width="30px">';
-                    }, orderable: false, searchable: false },
-                    {data: 'name', name: 'name'},
-                    {data: 'email', name: 'email'},
-                    {data: 'phone', name: 'phone'},
-                    {data: 'gender', name: 'gender', class: 'text-center'},
-                    {data: 'action', name: 'action', orderable: false, searchable: false, class: 'text-center'}
-                ],
-                searching: false,
-                lengthChange: false,
-                order: [[1, 'asc']],
-                pageLength: 25
-            });
-
-            // Search button click event
-            $('#searchBtn').click(function () {
-                datatable.ajax.reload();
-                $('#clearFilterBtn').removeClass('d-none');
-            });
-
-            // Clear filters functionality
-            $('#clearFilterBtn').click(function () {
-                $('#gender-filter').val('');
-                $('#email-filter').val('');
-                $('#name-filter').val('');
-                $('#visibility-filter').val('');
-
-                datatable.ajax.reload();
-
-                $(this).addClass('d-none');
-            });
-
-            $(document).on('click', '.delete-contact', function () {
-                let contactId = $(this).data('id');
-            
-                if (!confirm('Are you sure you want to delete this contact?')) return;
-            
-                $.ajax({
-                    url: '{{ route('contacts.destroy', '') }}/' + contactId,
-                    type: 'DELETE',
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function (response) {
-                        datatable.ajax.reload();
-
-                        showToast(response.message, 'success');
-                    },
-                    error: function (xhr) {
-                        alert('Error: ' + xhr.responseJSON.error);
-                    }
-                });
-            });
-
-            $(document).on('click', '.merge-contact', function() {
-                let modalElement = $('#mergeContactModal');
-                let contactId = $(this).data('id');
-
-                $.ajax({
-                    url: '{{ route("contacts.merge-contact-modal", "") }}/' + contactId,
-                    type: 'GET',
-                    success: function(response) {
-                        modalElement.html(response); 
-
-                        let modalInstance = new bootstrap.Modal(modalElement[0]); 
-                        modalInstance.show(); 
-                    },
-                    error: function(error) {
-                        console.error('Error loading modal content:', error);
-                    }
-                });
-            });
-        });
+        const indexRoute = '{{ route('contacts.index') }}';
+        const destroyRoute = '{{ route('contacts.destroy', '') }}';
+        const mergeContactRoute = '{{ route('contacts.merge-contact-modal', '') }}';
     </script>
 @endsection
+
+@vite(['resources/js/contacts/index.js'])

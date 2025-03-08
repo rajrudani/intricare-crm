@@ -35,7 +35,7 @@ class ContactRepository implements ContactRepositoryInterface
 
         return DataTables::of($contacts)
             ->addColumn('profile_image', fn($row) => $row->profile_imagepath)
-            ->addColumn('action', fn($row) => view('contacts.action-buttons', compact('row')))
+            ->addColumn('action', fn($row) => view('contacts.partials.action-buttons', compact('row')))
             ->rawColumns(['action'])
             ->make(true);
     }
