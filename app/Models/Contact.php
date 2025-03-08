@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Contact extends Model
 {
@@ -12,6 +13,16 @@ class Contact extends Model
     protected $fillable = [
         'name', 'email', 'phone', 'gender', 'profile_image', 'additional_file', 'custom_fields', 'merged_with', 'merged_data'
     ];
+
+    /**
+     * Get the masterContact that owns the Contact
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function masterContact(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'merged_with');
+    }
 
     // Scope - merged contacts
     public function scopeMerged($query)

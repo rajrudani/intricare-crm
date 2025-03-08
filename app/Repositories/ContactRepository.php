@@ -41,9 +41,16 @@ class ContactRepository implements ContactRepositoryInterface
         }
         
         return DataTables::of($contacts)
+            ->editColumn('name', function($row){
+                $name = $row->name;
+                if ($masterContact = $row->masterContact) {
+                    $name .= "<br/><small class='mt-1'> Merged to <b>" . $masterContact->name . "</b></small>";
+                }
+                return $name;
+            })
             ->addColumn('profile_image', fn($row) => $row->profile_imagepath)
             ->addColumn('action', fn($row) => view('contacts.partials.action-buttons', compact('row')))
-            ->rawColumns(['action'])
+            ->rawColumns(['name', 'action'])
             ->make(true);
     }
 
