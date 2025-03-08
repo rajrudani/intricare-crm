@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('additional_file')->nullable();
             $table->json('custom_fields')->nullable(); 
             $table->unsignedBigInteger('merged_with')->nullable();
+            $table->json('merged_data')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

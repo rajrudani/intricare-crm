@@ -11,7 +11,7 @@
                 <h2>Create <b>Contact</b></h2>
             </div>
             <div class="col-sm-8">
-                <a href="{{ route('contacts.index') }}" class="btn btn-warning"><span>All Contacts</span></a>
+                <a href="{{ route('contacts.index') }}" class="btn btn-warning"><span>Go To Home</span></a>
             </div>
         </div>
     </div>

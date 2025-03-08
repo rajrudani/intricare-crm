@@ -2,7 +2,9 @@
 
 namespace App\Repositories;
 
+use Carbon\Carbon;
 use App\Models\Contact;
+use App\Models\ContactMerge;
 use App\Models\ArchiveContact;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
@@ -60,11 +62,17 @@ class ContactRepository implements ContactRepositoryInterface
      */
     public function updateContact($validatedData, $contact)
     {
+        $mergedData = [
+            'emails' => isset($validatedData['merged_emails']) ? array_unique($validatedData['merged_emails']) : [],
+            'phones' => isset($validatedData['merged_phones']) ? array_unique($validatedData['merged_phones']) : [],
+        ];
+
         return $contact->update([
             'name'            => $validatedData['name'],
             'email'           => $validatedData['email'],
             'phone'           => $validatedData['phone'],
             'gender'          => $validatedData['gender'],
+            'merged_data'     => json_encode($mergedData),
             'custom_fields'   => isset($validatedData['custom_fields']) ? json_encode($validatedData['custom_fields']) : null,
             'profile_image'   => isset($validatedData['profile_image']) ? $validatedData['profile_image']->store('profile_images', 'public') : $contact->profile_image,
             'additional_file' => isset($validatedData['additional_file']) ? $validatedData['additional_file']->store('additional_files', 'public') : $contact->additional_file,
@@ -94,13 +102,17 @@ class ContactRepository implements ContactRepositoryInterface
         $this->archiveContact($masterContact);
 
         $masterContact->update([
-            'email'           => $this->mergeEmails($masterContact->email, $secondaryContact->email),
-            'phone'           => $this->mergePhoneNumbers($masterContact->phone, $secondaryContact->phone),
+            'merged_data'      => $this->mergeSecondaryData($masterContact, $secondaryContact),
             'custom_fields'   => $this->mergeCustomFields($masterContact->custom_fields, $secondaryContact->custom_fields),
             'additional_file' => $masterContact->additional_file ?? $secondaryContact->additional_file
         ]);
 
-        return $secondaryContact->update(['merged_with' => $masterContact->id]);
+        $secondaryContact->update(['merged_with' => $masterContact->id]);
+
+        return ContactMerge::create([
+            'master_contact_id' => $masterContact->id,
+            'merged_contact_id' => $secondaryContact->id,
+        ]);
     }
 
     /**
@@ -155,32 +167,32 @@ class ContactRepository implements ContactRepositoryInterface
     }
 
     /**
-     * Merge emails, store additional emails if they differ.
+     * Merge secondary contact emails and phone numbers into merged_data JSON column.
+     *
+     * @param Contact $masterContact
+     * @param Contact $secondaryContact
      */
-    private function mergeEmails($masterEmail, $secondaryEmail)
+    private function mergeSecondaryData($masterContact, $secondaryContact)
     {
-        $mergedEmails = array_unique(
-                            array_merge(
-                                array_map('trim', explode(',', $masterEmail)), 
-                                array_map('trim', explode(',', $secondaryEmail))
-                            )
-                        );
+        $mergedData = json_decode($masterContact->merged_data, true) ?? [
+            'emails' => [],
+            'phones' => []
+        ];
 
-        return implode(',', $mergedEmails);
-    }
+        $mergedData['emails'] = array_unique(
+                                    array_merge(
+                                        $mergedData['emails'], 
+                                        array_map('trim', explode(',', $secondaryContact->email))
+                                    )
+                                );
+                                
+        $mergedData['phones'] = array_unique(
+                                    array_merge(
+                                        $mergedData['phones'], 
+                                        array_map('trim', explode(',', $secondaryContact->phone))
+                                    )
+                                );
 
-    /**
-     * Merge phone numbers, store additional phone numbers if they differ.
-     */
-    private function mergePhoneNumbers($masterPhone, $secondaryPhone)
-    {
-        $mergePhones = array_unique(
-            array_merge(
-                array_map('trim', explode(',', $masterPhone)), 
-                array_map('trim', explode(',', $secondaryPhone))
-            )
-        );
-
-        return implode(',', $mergePhones);
+        return json_encode($mergedData);
     }
 }

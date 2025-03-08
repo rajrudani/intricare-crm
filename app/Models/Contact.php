@@ -10,7 +10,7 @@ class Contact extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'name', 'email', 'phone', 'gender', 'profile_image', 'additional_file', 'custom_fields', 'merged_with'
+        'name', 'email', 'phone', 'gender', 'profile_image', 'additional_file', 'custom_fields', 'merged_with', 'merged_data'
     ];
 
     //Profile Imagepath

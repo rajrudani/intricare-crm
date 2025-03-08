@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('master_contact_id'); // Main contact after merging
             $table->unsignedBigInteger('merged_contact_id'); // Contact that was merged
-            $table->timestamp('merged_at')->useCurrent();
+            $table->timestamps();
 
             $table->foreign('master_contact_id')->references('id')->on('contacts')->onDelete('cascade');
             $table->foreign('merged_contact_id')->references('id')->on('contacts')->onDelete('cascade');

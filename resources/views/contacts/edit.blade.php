@@ -11,7 +11,7 @@
                 <h2>Edit <b>Contact</b></h2>
             </div>
             <div class="col-sm-8">
-                <a href="{{ route('contacts.index') }}" class="btn btn-warning"><span>All Contacts</span></a>
+                <a href="{{ route('contacts.index') }}" class="btn btn-warning"><span>Go To Home</span></a>
             </div>
         </div>
     </div>
@@ -27,20 +27,6 @@
                             <label for="name">Name *</label>
                             <input type="text" class="form-control" id="name" name="name"
                                 value="{{ $contact->name }}">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="email">Email *</label>
-                            <input type="email" class="form-control" id="email" name="email"
-                                value="{{ $contact->email }}">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="phone">Phone No. *</label>
-                            <input type="text" class="form-control" id="phone" name="phone"
-                                value="{{ $contact->phone }}">
                         </div>
                     </div>
                     <div class="col-md-6 mt-2">
@@ -66,6 +52,56 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" class="form-control" id="email" name="email"
+                                value="{{ $contact->email }}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="phone">Phone No. *</label>
+                            <input type="text" class="form-control" id="phone" name="phone"
+                                value="{{ $contact->phone }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    @php
+                        $mergedData = json_decode($contact->merged_data, true) ?? ['emails' => [], 'phones' => []];
+                    @endphp
+                    @empty(!$mergedData['emails'])
+                        <div class="col-md-6">
+                            <b><span class="mr-1"><i class="fa fa-envelope"></i></span> Secondary Emails</b>
+                            <div class="mt-1">
+                                @foreach ($mergedData['emails'] as $index => $email)
+                                    <div class="input-group mb-2">
+                                        <input type="email" class="form-control" name="merged_emails[]"
+                                            value="{{ $email }}" required>
+                                        <button type="button" class="btn btn-danger remove-field">✖</button>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endempty
+                    @empty(!$mergedData['phones'])
+                        <div class="col-md-6">
+                            <b><span class="mr-1"><i class="fa fa-phone"></i></span> Secondary Phones</b>
+                            <div class="mt-1">
+                                @foreach ($mergedData['phones'] as $index => $phone)
+                                    <div class="input-group mb-2">
+                                        <input type="text" class="form-control" name="merged_phones[]"
+                                            value="{{ $phone }}" required>
+                                        <button type="button" class="btn btn-danger remove-field">✖</button>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endempty
+                </div>
+                <hr>
+                <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="profile_image">Profile Image *</label>
@@ -175,6 +211,17 @@
                                             '.')[2] + `]"`);
                                     customFieldElement.addClass('is-invalid').after(
                                         errorMessage);
+
+                                // } else if (field.startsWith('merged_emails')) {
+                                //     $('[name="merged_emails[]"]').each(function(index) {
+                                //         $(this).addClass('is-invalid');
+                                //     });
+                                
+                                // } else if (field.startsWith('merged_phones')) {
+                                //     $('[name="merged_phones[]"]').each(function(index) {
+                                //         $(this).addClass('is-invalid');
+                                //     });
+
                                 } else {
                                     var fieldElement = $('[name="' + field + '"]');
                                     if (fieldElement.attr('type') === 'radio') {
@@ -228,6 +275,10 @@
                 `;
                 return newRow;
             }
+
+            $(document).on('click', '.remove-field', function() {
+                $(this).closest('.input-group').remove();
+            });
         });
     </script>
 @endsection
