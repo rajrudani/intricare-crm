@@ -28,9 +28,7 @@ class ContactRequest extends FormRequest
         
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => $isUpdate 
-                ? ['required', 'email', 'unique:contacts,email,'.$contactId]
-                : ['required', 'email', 'unique:contacts,email'],
+            'email' =>  ['required', 'email', 'max:255'],
             'phone' => ['required', 'string', 'max:20'],
             'gender' => ['required', 'in:Male,Female,Other'],
             'profile_image' => $isUpdate 

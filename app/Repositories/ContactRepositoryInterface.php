@@ -2,11 +2,17 @@
 
 namespace App\Repositories;
 
+use App\Models\Contact;
+
 interface ContactRepositoryInterface
 {
-    // public function getAllContacts();
+    public function getDatatable(array $filters);
 
-    // public function storeContact(array $data);
+    public function storeContact(array $validatedData);
 
-    // public function updateContact($contact, array $data);
+    public function updateContact(array $validatedData, Contact $contact);
+
+    public function destroyContact(Contact $contact);
+
+    public function mergeContacts(array $validatedData);
 }

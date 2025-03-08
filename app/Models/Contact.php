@@ -13,6 +13,18 @@ class Contact extends Model
         'name', 'email', 'phone', 'gender', 'profile_image', 'additional_file', 'custom_fields', 'merged_with', 'merged_data'
     ];
 
+    // Scope - merged contacts
+    public function scopeMerged($query)
+    {
+        return $query->whereNotNull('merged_with');
+    }
+
+    // Scope - not merged contacts
+    public function scopeNotMerged($query)
+    {
+        return $query->whereNull('merged_with');
+    }
+
     //Profile Imagepath
     public function getProfileImagepathAttribute()
     {

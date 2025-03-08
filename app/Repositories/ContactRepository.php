@@ -27,6 +27,12 @@ class ContactRepository implements ContactRepositoryInterface
             }
         }
 
+        if($filters['visibility'] == 'merged'){
+            $contacts->merged();
+        }else if($filters['visibility'] == 'not_merged'){
+            $contacts->notMerged();
+        }
+
         return DataTables::of($contacts)
             ->addColumn('profile_image', fn($row) => $row->profile_imagepath)
             ->addColumn('action', fn($row) => view('contacts.action-buttons', compact('row')))
@@ -137,14 +143,16 @@ class ContactRepository implements ContactRepositoryInterface
      */
     private function mergeCustomFields($masterFields, $secondaryFields)
     {
+        $masterFieldMap = [];
+        $mergedCustomFields = [];
         $masterCustomFields = json_decode($masterFields, true) ?? [];
         $secondaryCustomFields = json_decode($secondaryFields, true) ?? [];
 
-        $mergedCustomFields = [];
-
-        $masterFieldMap = [];
         foreach ($masterCustomFields as $field) {
-            $masterFieldMap[$field['title']] = $field['value'];
+            $masterFieldMap[$field['title']] = [
+                'value' => $field['value'],
+                'action' => isset($field['action']) ? $field['action'] : 'original'
+            ];
         }
 
         foreach ($secondaryCustomFields as $field) {
@@ -152,14 +160,18 @@ class ContactRepository implements ContactRepositoryInterface
             $value = $field['value'];
 
             if (!isset($masterFieldMap[$title])) {
-                $masterFieldMap[$title] = $value;
+                $masterFieldMap[$title] = [
+                    'value' => $value,
+                    'action' => 'merged'
+                ];
             }
         }
 
-        foreach ($masterFieldMap as $title => $value) {
+        foreach ($masterFieldMap as $title => $data) {
             $mergedCustomFields[] = [
                 'title' => $title,
-                'value' => $value
+                'value' => $data['value'],
+                'action' => $data['action']
             ];
         }
 
@@ -167,10 +179,12 @@ class ContactRepository implements ContactRepositoryInterface
     }
 
     /**
-     * Merge secondary contact emails and phone numbers into merged_data JSON column.
+     * Merge secondary contact emails and phone numbers into merged_data JSON column,
+     * but only if they are not already in the master contact's primary email or phone.
      *
      * @param Contact $masterContact
      * @param Contact $secondaryContact
+     * @return string (JSON)
      */
     private function mergeSecondaryData($masterContact, $secondaryContact)
     {
@@ -179,19 +193,32 @@ class ContactRepository implements ContactRepositoryInterface
             'phones' => []
         ];
 
+        $secondaryMergedData = json_decode($secondaryContact->merged_data, true) ?? [
+            'emails' => [],
+            'phones' => []
+        ];
+
         $mergedData['emails'] = array_unique(
-                                    array_merge(
-                                        $mergedData['emails'], 
-                                        array_map('trim', explode(',', $secondaryContact->email))
-                                    )
-                                );
-                                
+            array_merge(
+                $mergedData['emails'],
+                array_diff(
+                    array_map('trim', explode(',', $secondaryContact->email)),
+                    array_map('trim', explode(',', $masterContact->email))
+                ),
+                $secondaryMergedData['emails']
+            )
+        );
+    
         $mergedData['phones'] = array_unique(
-                                    array_merge(
-                                        $mergedData['phones'], 
-                                        array_map('trim', explode(',', $secondaryContact->phone))
-                                    )
-                                );
+            array_merge(
+                $mergedData['phones'],
+                array_diff(
+                    array_map('trim', explode(',', $secondaryContact->phone)),
+                    array_map('trim', explode(',', $masterContact->phone))
+                ),
+                $secondaryMergedData['phones']
+            )
+        );
 
         return json_encode($mergedData);
     }

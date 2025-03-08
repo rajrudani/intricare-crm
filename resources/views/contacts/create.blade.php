@@ -27,18 +27,6 @@
                             <input type="text" class="form-control" id="name" name="name">
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="email">Email *</label>
-                            <input type="email" class="form-control" id="email" name="email">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="phone">Phone No. *</label>
-                            <input type="text" class="form-control" id="phone" name="phone">
-                        </div>
-                    </div>
                     <div class="col-md-6 mt-2">
                         <label for="gender">Gender *</label>
                         <div class="form-group">
@@ -57,6 +45,18 @@
                                     <input type="radio" class="form-check-input" name="gender" value="Other">Other
                                 </label>
                             </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" class="form-control" id="email" name="email">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="phone">Phone No. *</label>
+                            <input type="text" class="form-control" id="phone" name="phone">
                         </div>
                     </div>
                     <div class="col-md-6">

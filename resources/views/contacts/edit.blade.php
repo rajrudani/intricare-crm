@@ -143,6 +143,9 @@
                                             <input type="text" class="form-control"
                                                 name="custom_fields[{{ $fieldCounter }}][title]"
                                                 value="{{ $customField->title }}" placeholder="Title">
+                                            @if(isset($customField->action) && $customField->action != 'original')
+                                                <span class="text-danger">{{ ucfirst($customField->action) }} Field</span>
+                                            @endif
                                         </div>
                                         <div class="col-md-7">
                                             <input type="text" class="form-control"

@@ -38,6 +38,14 @@
                     <label>Name</label>
                     <input type="text" class="form-control" id="name-filter">
                 </div>
+                <div class="filter-group">
+                    <label>Visibility</label>
+                    <select class="form-control" id="visibility-filter">
+                        <option value="">All</option>
+                        <option value="merged">Merged</option>
+                        <option value="not_merged">Not Merged</option>
+                    </select>
+                </div>
                 <span class="filter-icon" ><i class="fa fa-filter"></i></span>
             </div>
         </div>
@@ -73,7 +81,8 @@
                         d.filters = {
                             gender: $('#gender-filter').val(),
                             email: $('#email-filter').val(),
-                            name: $('#name-filter').val()
+                            name: $('#name-filter').val(),
+                            visibility: $('#visibility-filter').val()
                         };
                     }
                 },
@@ -105,6 +114,7 @@
                 $('#gender-filter').val('');
                 $('#email-filter').val('');
                 $('#name-filter').val('');
+                $('#visibility-filter').val('');
 
                 datatable.ajax.reload();
 

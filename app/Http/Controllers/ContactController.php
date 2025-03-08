@@ -101,12 +101,19 @@ class ContactController extends Controller
     {   
         $contact = Contact::find($contactId);
         $masterContacts = Contact::where('id', '!=', $contactId)
+                                ->notMerged()
                                 ->orderBy('name')
                                 ->get();
 
         return view('contacts.merge-contact-modal', compact('contact', 'masterContacts'));
     }
 
+    /**
+     * Handle the merging of two contacts.
+     * 
+     * @param MergeContactRequest $request The validated request data containing the contact details to be merged.
+     * @return \Illuminate\Http\JsonResponse A JSON response indicating the success of the merge operation.
+     */
     public function mergeContacts(MergeContactRequest $request)
     {   
         $this->contactRepository->mergeContacts($request->validated());
