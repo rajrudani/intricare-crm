@@ -23,17 +23,23 @@ class ContactRepository implements ContactRepositoryInterface
         foreach (['gender', 'email', 'name', 'visibility'] as $filter) {
             if (!empty($filters[$filter])) {
                 $value = $filters[$filter];
-                if($filter == 'gender'){
+        
+                if ($filter == 'visibility') {
+                    if ($value == 'merged') {
+                        $contacts->merged();
+                    } elseif ($value == 'not_merged') {
+                        $contacts->notMerged();
+                    }
+                }
+                elseif ($filter == 'gender') {
                     $contacts->where($filter, $value);
-                } else if($filter == 'visibility'){
-                    if($value == 'merged') $contacts->merged();
-                    else if($value == 'not_merged') $contacts->notMerged();
-                } else{
-                    $contacts->where($filter, is_string($value) ? 'like' : '=', is_string($value) ? "%$value%" : $value);
+                }
+                else {
+                    $contacts->where($filter, 'like', "%$value%");
                 }
             }
         }
- 
+        
         return DataTables::of($contacts)
             ->addColumn('profile_image', fn($row) => $row->profile_imagepath)
             ->addColumn('action', fn($row) => view('contacts.partials.action-buttons', compact('row')))
