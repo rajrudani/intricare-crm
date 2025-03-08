@@ -20,19 +20,20 @@ class ContactRepository implements ContactRepositoryInterface
     public function getDatatable($filters)
     {
         $contacts = Contact::query();
-        foreach (['gender', 'email', 'name'] as $filter) {
+        foreach (['gender', 'email', 'name', 'visibility'] as $filter) {
             if (!empty($filters[$filter])) {
                 $value = $filters[$filter];
-                $contacts->where($filter, is_string($value) ? 'like' : '=', is_string($value) ? "%$value%" : $value);
+                if($filter == 'gender'){
+                    $contacts->where($filter, $value);
+                } else if($filter == 'visibility'){
+                    if($value == 'merged') $contacts->merged();
+                    else if($value == 'not_merged') $contacts->notMerged();
+                } else{
+                    $contacts->where($filter, is_string($value) ? 'like' : '=', is_string($value) ? "%$value%" : $value);
+                }
             }
         }
-
-        if($filters['visibility'] == 'merged'){
-            $contacts->merged();
-        }else if($filters['visibility'] == 'not_merged'){
-            $contacts->notMerged();
-        }
-
+ 
         return DataTables::of($contacts)
             ->addColumn('profile_image', fn($row) => $row->profile_imagepath)
             ->addColumn('action', fn($row) => view('contacts.partials.action-buttons', compact('row')))
